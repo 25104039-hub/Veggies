@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thottam — South Indian Vegetable Market</title>
+<style>
+  :root{
+    --leaf-deep:#1f4d2c;
+    --leaf:#3c7a45;
+    --leaf-light:#e8f2e3;
+    --turmeric:#d99a1f;
+    --clay:#b85c2e;
+    --cream:#fbf6ea;
+    --ink:#22301f;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+  }
+  h1,h2,h3{ font-family: Georgia, 'Times New Roman', serif; margin:0; }
+
+  header{
+    background: linear-gradient(135deg, var(--leaf-deep), var(--leaf));
+    color:#fff;
+    padding:32px 24px 40px;
+    position:relative;
+    overflow:hidden;
+  }
+  header .band{
+    max-width:1100px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  header h1{ font-size:2.2rem; letter-spacing:.5px; }
+  header p.tag{ margin-top:6px; color:var(--leaf-light); font-size:1rem; }
+  .badge{
+    background:var(--turmeric);
+    color:#3a2a05;
+    padding:6px 14px;
+    border-radius:20px;
+    font-weight:600;
+    font-size:.85rem;
+    white-space:nowrap;
+  }
+
+  .search-wrap{
+    max-width:640px;
+    margin:26px auto 0;
+    position:relative;
+  }
+  .search-wrap input{
+    width:100%;
+    padding:14px 20px 14px 46px;
+    border-radius:30px;
+    border:none;
+    font-size:1rem;
+    outline:none;
+    box-shadow:0 6px 20px rgba(0,0,0,.18);
+  }
+  .search-wrap svg{
+    position:absolute;
+    left:16px; top:50%;
+    transform:translateY(-50%);
+    width:20px; height:20px;
+    fill:none; stroke:var(--leaf-deep); stroke-width:2.2;
+  }
+
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:28px 20px 60px;
+  }
+
+  .filters{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:24px;
+  }
+  .filters button{
+    background:var(--card);
+    border:1.5px solid var(--leaf-light);
+    color:var(--leaf-deep);
+    padding:8px 16px;
+    border-radius:20px;
+    cursor:pointer;
+    font-size:.9rem;
+    transition:background .15s, color .15s;
+  }
+  .filters button.active, .filters button:hover{
+    background:var(--leaf-deep);
+    color:#fff;
+    border-color:var(--leaf-deep);
+  }
+
+  .price-note{
+    font-size:.85rem;
+    color:#6c7a63;
+    margin-bottom:18px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(210px, 1fr));
+    gap:18px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:16px;
+    padding:16px;
+    text-align:center;
+    box-shadow:0 3px 10px rgba(40,60,30,.08);
+    transition:transform .15s ease;
+    position:relative;
+  }
+  .card:hover{ transform:translateY(-4px); }
+
+  .card .icon-wrap{
+    background:var(--leaf-light);
+    border-radius:50%;
+    width:110px; height:110px;
+    margin:0 auto 12px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card .icon-wrap svg{ width:70px; height:70px; }
+
+  .card h3{ font-size:1.05rem; margin-bottom:2px; }
+  .card .tamil{ font-size:.8rem; color:#7a8a71; margin-bottom:8px; }
+
+  .card .price{
+    display:inline-block;
+    background:var(--turmeric);
+    color:#3a2a05;
+    font-weight:700;
+    padding:5px 12px;
+    border-radius:14px;
+    font-size:.95rem;
+    margin-bottom:4px;
+  }
+  .card .unit{ font-size:.75rem; color:#8a9581; }
+
+  .deal{
+    position:absolute;
+    top:10px; right:10px;
+    background:var(--clay);
+    color:#fff;
+    font-size:.68rem;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:10px;
+    letter-spacing:.3px;
+  }
+
+  .add-btn{
+    margin-top:10px;
+    width:100%;
+    background:var(--leaf-deep);
+    color:#fff;
+    border:none;
+    padding:9px 0;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:.88rem;
+    transition:background .15s;
+  }
+  .add-btn:hover{ background:var(--leaf); }
+  .add-btn.added{ background:var(--clay); }
+
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:#8a9581;
+    display:none;
+  }
+
+  footer{
+    text-align:center;
+    padding:24px;
+    color:#8a9581;
+    font-size:.85rem;
+  }
+
+  .cart-fab{
+    position:fixed;
+    bottom:22px; right:22px;
+    background:var(--leaf-deep);
+    color:#fff;
+    padding:12px 18px;
+    border-radius:30px;
+    box-shadow:0 6px 16px rgba(0,0,0,.25);
+    font-size:.9rem;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    cursor:default;
+  }
+  .cart-fab strong{ font-size:1.05rem; }
+
+  @media (max-width:480px){
+    header h1{ font-size:1.6rem; }
+    .card .icon-wrap{ width:90px; height:90px; }
+    .card .icon-wrap svg{ width:56px; height:56px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="band">
+    <div>
+      <h1>🥬 Thottam Market</h1>
+      <p class="tag">Fresh South Indian vegetables, straight from the farm to your kitchen</p>
+    </div>
+    <span class="badge">Today's prices — lowest this week</span>
+  </div>
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchBox" type="text" placeholder="Search for drumstick, brinjal, okra...">
+  </div>
+</header>
+
+<main>
+  <div class="filters" id="filters"></div>
+  <p class="price-note">Prices shown per kg (or per bunch/piece where noted), updated for today.</p>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="emptyMsg">No vegetables found. Try a different search 🌱</div>
+</main>
+
+<footer>Thottam Market · Grown in Tamil Nadu, Kerala, Karnataka & Andhra Pradesh soil 🌾</footer>
+
+<div class="cart-fab" id="cartFab" style="display:none;">🧺 <strong id="cartCount">0</strong> added</div>
+
+<script>
+const veggies = [
+  {
+    name:"Drumstick", tamil:"முருங்கைக்காய்", category:"pods",
+    price:40, unit:"per kg", deal:true,
+    color1:"#8fae5a", color2:"#6f8f3d",
+    icon:`<svg viewBox="0 0 100 100"><rect x="20" y="10" width="14" height="80" rx="7" fill="#8fae5a"/><rect x="40" y="15" width="12" height="72" rx="6" fill="#a3c26e"/><rect x="58" y="20" width="10" height="62" rx="5" fill="#8fae5a"/><circle cx="27" cy="14" r="4" fill="#5c7a34"/></svg>`
+  },
+  {
+    name:"Brinjal", tamil:"கத்தரிக்காய்", category:"gourds",
+    price:30, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="58" rx="28" ry="34" fill="#6b3fa0"/><ellipse cx="42" cy="45" rx="8" ry="14" fill="#8a5fc2" opacity="0.6"/><path d="M50 24 Q40 10 30 16 Q45 20 50 28" fill="#4c7a3a"/><rect x="47" y="8" width="6" height="18" rx="3" fill="#4c7a3a"/></svg>`
+  },
+  {
+    name:"Okra (Ladies Finger)", tamil:"வெண்டைக்காய்", category:"pods",
+    price:35, unit:"per kg", deal:true,
+    icon:`<svg viewBox="0 0 100 100"><path d="M50 90 L44 30 Q50 10 56 30 Z" fill="#4f9e4a"/><path d="M50 90 L46 40" stroke="#3a7a37" stroke-width="2"/><path d="M50 90 L54 40" stroke="#3a7a37" stroke-width="2"/><circle cx="50" cy="14" r="5" fill="#3a7a37"/></svg>`
+  },
+  {
+    name:"Snake Gourd", tamil:"புடலங்காய்", category:"gourds",
+    price:25, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><path d="M20 20 Q60 20 55 45 Q90 45 80 80 Q60 100 50 75 Q15 75 20 40 Q15 25 20 20 Z" fill="#6ba85f"/><path d="M20 20 Q60 20 55 45 Q90 45 80 80" fill="none" stroke="#4a8140" stroke-width="2"/></svg>`
+  },
+  {
+    name:"Bitter Gourd", tamil:"பாகற்காய்", category:"gourds",
+    price:32, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="55" rx="18" ry="38" fill="#5f9e3f"/><g fill="#4a7d30"><circle cx="42" cy="30" r="3"/><circle cx="58" cy="35" r="3"/><circle cx="40" cy="50" r="3"/><circle cx="60" cy="55" r="3"/><circle cx="45" cy="70" r="3"/><circle cx="58" cy="75" r="3"/></g></svg>`
+  },
+  {
+    name:"Pumpkin", tamil:"பூசணிக்காய்", category:"gourds",
+    price:22, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="58" rx="36" ry="28" fill="#e08a2c"/><path d="M50 30 L50 86" stroke="#c26f1a" stroke-width="3"/><path d="M32 32 Q50 24 68 32" fill="none" stroke="#c26f1a" stroke-width="3"/><rect x="46" y="14" width="8" height="16" rx="3" fill="#4c7a3a"/></svg>`
+  },
+  {
+    name:"Ridge Gourd", tamil:"பீர்க்கங்காய்", category:"gourds",
+    price:28, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><path d="M35 10 Q30 50 40 90 Q50 95 60 90 Q70 50 65 10 Q50 4 35 10 Z" fill="#7fae4a"/><path d="M40 15 Q35 50 42 88" stroke="#5c8a34" stroke-width="2" fill="none"/><path d="M60 15 Q65 50 58 88" stroke="#5c8a34" stroke-width="2" fill="none"/></svg>`
+  },
+  {
+    name:"Tomato", tamil:"தக்காளி", category:"veg",
+    price:24, unit:"per kg", deal:true,
+    icon:`<svg viewBox="0 0 100 100"><circle cx="50" cy="58" r="34" fill="#e2432b"/><path d="M38 28 Q50 18 62 28 Q50 34 38 28Z" fill="#4c7a3a"/><ellipse cx="40" cy="45" rx="8" ry="5" fill="#f07354" opacity="0.6"/></svg>`
+  },
+  {
+    name:"Small Onion", tamil:"சின்ன வெங்காயம்", category:"root",
+    price:45, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="60" rx="26" ry="28" fill="#b5651d"/><path d="M50 32 Q46 20 50 8 Q54 20 50 32Z" fill="#8a9c5e"/><ellipse cx="42" cy="50" rx="6" ry="14" fill="#c97b34" opacity="0.5"/></svg>`
+  },
+  {
+    name:"Green Chilli", tamil:"பச்சை மிளகாய்", category:"pods",
+    price:60, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><path d="M20 30 Q60 10 80 40 Q85 55 65 65 Q35 75 20 55 Q10 40 20 30Z" fill="#3fa03f"/><rect x="14" y="24" width="10" height="12" rx="3" fill="#2d7a2d"/></svg>`
+  },
+  {
+    name:"Curry Leaves", tamil:"கறிவேப்பிலை", category:"herbs",
+    price:10, unit:"per bunch", deal:true,
+    icon:`<svg viewBox="0 0 100 100"><line x1="50" y1="15" x2="50" y2="90" stroke="#3a7a37" stroke-width="3"/><g fill="#4f9e4a"><ellipse cx="40" cy="30" rx="9" ry="5" transform="rotate(-30 40 30)"/><ellipse cx="60" cy="30" rx="9" ry="5" transform="rotate(30 60 30)"/><ellipse cx="38" cy="48" rx="9" ry="5" transform="rotate(-30 38 48)"/><ellipse cx="62" cy="48" rx="9" ry="5" transform="rotate(30 62 48)"/><ellipse cx="40" cy="66" rx="9" ry="5" transform="rotate(-30 40 66)"/><ellipse cx="60" cy="66" rx="9" ry="5" transform="rotate(30 60 66)"/></g></svg>`
+  },
+  {
+    name:"Raw Banana", tamil:"வாழைக்காய்", category:"veg",
+    price:35, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><path d="M25 70 Q30 25 65 18 Q75 20 72 30 Q45 35 40 75 Q32 82 25 70Z" fill="#8fae3f"/></svg>`
+  },
+  {
+    name:"Ash Gourd", tamil:"பூசணி (வெள்ளை)", category:"gourds",
+    price:20, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="56" rx="34" ry="30" fill="#cfe0b8"/><ellipse cx="50" cy="56" rx="34" ry="30" fill="none" stroke="#a8c084" stroke-width="2"/><rect x="46" y="18" width="8" height="14" rx="3" fill="#4c7a3a"/></svg>`
+  },
+  {
+    name:"Cluster Beans", tamil:"கொத்தவரங்காய்", category:"pods",
+    price:38, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><g stroke="#4f9e4a" stroke-width="8" stroke-linecap="round" fill="none"><path d="M30 20 Q20 40 30 60"/><path d="M45 15 Q35 40 45 68"/><path d="M60 20 Q50 45 60 72"/><path d="M75 25 Q68 50 75 65"/></g></svg>`
+  },
+  {
+    name:"Colocasia (Seppankilangu)", tamil:"சேப்பங்கிழங்கு", category:"root",
+    price:42, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="65" rx="22" ry="18" fill="#c9a876"/><path d="M50 47 Q30 20 50 5 Q70 20 50 47Z" fill="#4f9e4a"/></svg>`
+  },
+  {
+    name:"Beetroot", tamil:"பீட்ரூட்", category:"root",
+    price:30, unit:"per kg",
+    icon:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="62" rx="26" ry="28" fill="#9c2b4e"/><path d="M45 34 Q40 15 48 4 M55 34 Q60 15 54 4" stroke="#4c7a3a" stroke-width="3" fill="none"/></svg>`
+  }
+];
+
+const categories = [
+  {id:"all", label:"All"},
+  {id:"gourds", label:"Gourds"},
+  {id:"pods", label:"Pods & Beans"},
+  {id:"root", label:"Roots"},
+  {id:"veg", label:"Vegetables"},
+  {id:"herbs", label:"Herbs"}
+];
+
+let activeCat = "all";
+let cartCount = 0;
+
+const filtersEl = document.getElementById('filters');
+categories.forEach(c => {
+  const btn = document.createElement('button');
+  btn.textContent = c.label;
+  if(c.id === 'all') btn.classList.add('active');
+  btn.onclick = () => {
+    activeCat = c.id;
+    document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  };
+  filtersEl.appendChild(btn);
+});
+
+function render(){
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const filtered = veggies.filter(v => {
+    const matchesCat = activeCat === 'all' || v.category === activeCat;
+    const matchesQ = !q || v.name.toLowerCase().includes(q) || v.tamil.includes(q);
+    return matchesCat && matchesQ;
+  });
+
+  document.getElementById('emptyMsg').style.display = filtered.length ? 'none' : 'block';
+
+  filtered.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      ${v.deal ? '<span class="deal">Best price</span>' : ''}
+      <div class="icon-wrap">${v.icon}</div>
+      <h3>${v.name}</h3>
+      <div class="tamil">${v.tamil}</div>
+      <div class="price">₹${v.price}</div>
+      <div class="unit">${v.unit}</div>
+      <button class="add-btn">Add to basket</button>
+    `;
+    const btn = card.querySelector('.add-btn');
+    btn.onclick = () => {
+      btn.textContent = 'Added ✓';
+      btn.classList.add('added');
+      cartCount++;
+      const fab = document.getElementById('cartFab');
+      fab.style.display = 'flex';
+      document.getElementById('cartCount').textContent = cartCount;
+      setTimeout(() => { btn.textContent = 'Add to basket'; btn.classList.remove('added'); }, 1200);
+    };
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('searchBox').addEventListener('input', render);
+render();
+</script>
+
+</body>
+</html>
